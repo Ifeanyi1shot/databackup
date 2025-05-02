@@ -44,7 +44,7 @@ jobs:
           .\backup.ps1
 
       - name: Upload backup logs as artifacts
-        uses: actions/upload-artifact@v3.1.
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: backup-logs
           path: logs/*.txt
