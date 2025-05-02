@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         env:
           AZURE_SQL_ADMIN: ${{ secrets.SQL_ADMIN_USERNAME }}
-          AZURE_SQL_PASSWORD: ${{ secrets.SQL_ADMIN_PASSWORD }
+          AZURE_SQL_PASSWORD: ${{ secrets.SQL_ADMIN_PASSWORD }}
         run: |
           # Optional log
           Write-Output "Backup started on $(Get-Date)"
