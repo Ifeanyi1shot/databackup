@@ -1,0 +1,51 @@
+name: Weekly Azure SQL Backup
+
+on:
+  schedule:
+    # Runs at 2:00 AM UTC every Monday
+    - cron: '0 2 * * 1'
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
+
+jobs:
+  backup:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up PowerShell modules
+        shell: pwsh
+        run: |
+          Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser
+          Install-Module -Name SqlServer -Force -Scope CurrentUser
+
+      - name: Login to Azure
+        shell: pwsh
+        run: |
+          $securePassword = ConvertTo-SecureString "${{ secrets.AZURE_PASSWORD }}" -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential("${{ secrets.AZURE_USERNAME }}", $securePassword)
+          Connect-AzAccount -Credential $credential -TenantId "${{ secrets.AZURE_TENANT_ID }}" -ServicePrincipal
+
+      - name: Run backup script
+        shell: pwsh
+        env:
+          AZURE_SQL_ADMIN: ${{ secrets.SQL_ADMIN_USERNAME }}
+          AZURE_SQL_PASSWORD: ${{ secrets.SQL_ADMIN_PASSWORD }
+        run: |
+          # Optional log
+          Write-Output "Backup started on $(Get-Date)"
+          Write-Output "Running as user: $env:USERNAME"
+          
+          # Create output directory for logs
+          New-Item -Path ".\logs" -ItemType Directory -Force | Out-Null
+          
+          # Run the backup script (update path if needed)
+          .\backup.ps1
+
+      - name: Upload backup logs as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: backup-logs
+          path: logs/*.txt
+          retention-days: 30
