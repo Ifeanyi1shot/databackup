@@ -17,7 +17,10 @@ jobs:
         shell: pwsh
         run: |
           Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser
-          Install-Module -Name SqlServer -Force -Scope CurrentUser
+          if (-not (Get-Module -ListAvailable -Name SqlServer)) {
+            Install-Module -Name SqlServer -Force -AllowClobber -Scope CurrentUser
+          }
+
       
       - name: Login to Azure
         shell: pwsh
