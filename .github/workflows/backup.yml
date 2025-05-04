@@ -1,5 +1,4 @@
 name: Weekly Azure SQL Backup
-
 on:
   schedule:
     # Runs at 2:00 AM UTC every Monday
@@ -12,21 +11,21 @@ jobs:
     
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+      
       - name: Set up PowerShell modules
         shell: pwsh
         run: |
           Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser
           Install-Module -Name SqlServer -Force -Scope CurrentUser
-
+      
       - name: Login to Azure
         shell: pwsh
         run: |
           $securePassword = ConvertTo-SecureString "${{ secrets.AZURE_PASSWORD }}" -AsPlainText -Force
           $credential = New-Object System.Management.Automation.PSCredential("${{ secrets.AZURE_USERNAME }}", $securePassword)
           Connect-AzAccount -Credential $credential -TenantId "${{ secrets.AZURE_TENANT_ID }}" -ServicePrincipal
-
+      
       - name: Run backup script
         shell: pwsh
         env:
@@ -42,9 +41,9 @@ jobs:
           
           # Run the backup script (update path if needed)
           .\backup.ps1
-
+      
       - name: Upload backup logs as artifacts
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4
         with:
           name: backup-logs
           path: logs/*.txt
