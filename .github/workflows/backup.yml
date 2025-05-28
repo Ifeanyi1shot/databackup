@@ -2,8 +2,8 @@ name: Weekly Azure SQL Backup
 on:
   schedule:
     # Runs at 2:00 AM UTC every Monday
-    - cron: '0 2 * * 1'
-  workflow_dispatch:  # Allows manual triggering from GitHub UI
+   # - cron: '0 2 * * 1'
+ # workflow_dispatch:  # Allows manual triggering from GitHub UI
 
 jobs:
   backup:
